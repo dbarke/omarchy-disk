@@ -1,0 +1,101 @@
+{
+  "schemaVersion": 1,
+  "id": "dbarke.disk",
+  "name": "Disk",
+  "version": "1.0.0",
+  "author": "dbarke",
+  "license": "MIT",
+  "description": "Filesystem usage in the bar, every mount metered in the panel, and a fill-rate projection when something is actively eating the disk.",
+  "kinds": [
+    "bar-widget"
+  ],
+  "entryPoints": {
+    "barWidget": "Panel.qml"
+  },
+  "barWidget": {
+    "displayName": "Disk",
+    "description": "One filesystem on the bar, all of them in the panel, with a warning before you run out and a projection when one is filling.",
+    "category": "System",
+    "aliases": ["disk", "diskspace", "storage", "filesystem", "df"],
+    "allowMultiple": false,
+    "defaultSection": "right",
+    "defaults": {
+      "refreshIntervalSec": 30,
+      "mount": "/",
+      "display": "percent",
+      "warnPercent": 85,
+      "warnOnAnyMount": true,
+      "minSizeGb": 1,
+      "dedupe": true,
+      "exclude": ""
+    },
+    "schema": [
+      {
+        "key": "refreshIntervalSec",
+        "type": "integer",
+        "label": "Refresh interval (seconds)",
+        "min": 5,
+        "max": 3600,
+        "step": 5,
+        "defaultValue": 30,
+        "description": "Disk usage moves slowly. Polling harder than this only spawns processes -- but the fill projection does get sharper."
+      },
+      {
+        "key": "mount",
+        "type": "string",
+        "label": "Mount point on the bar",
+        "defaultValue": "/",
+        "description": "Which filesystem the bar reading summarises. Falls back to the fullest one if this mount is not present."
+      },
+      {
+        "key": "display",
+        "type": "enum",
+        "label": "Bar reading",
+        "options": ["percent", "free", "used"],
+        "defaultValue": "percent",
+        "description": "percent = 42%, free = 201G free, used = 60G/274G."
+      },
+      {
+        "key": "warnPercent",
+        "type": "integer",
+        "label": "Warning threshold (%)",
+        "min": 0,
+        "max": 100,
+        "step": 5,
+        "defaultValue": 85,
+        "description": "At or above this the reading turns urgent. 0 disables."
+      },
+      {
+        "key": "warnOnAnyMount",
+        "type": "boolean",
+        "label": "Warn about any filesystem",
+        "defaultValue": true,
+        "description": "Tint the bar when some other mount crosses the threshold, so a full /home is visible while the bar is showing /."
+      },
+      {
+        "key": "minSizeGb",
+        "type": "integer",
+        "label": "Ignore filesystems smaller than (GB)",
+        "min": 0,
+        "max": 1024,
+        "step": 1,
+        "defaultValue": 1,
+        "description": "Keeps EFI stubs and small loop mounts out of the list."
+      },
+      {
+        "key": "dedupe",
+        "type": "boolean",
+        "label": "Collapse subvolumes",
+        "defaultValue": true,
+        "description": "One row per underlying device. Without this, btrfs subvolumes read as several disks that are all equally full."
+      },
+      {
+        "key": "exclude",
+        "type": "string",
+        "label": "Hide these mount points",
+        "defaultValue": "",
+        "description": "JSON array such as [\"/boot\", \"/mnt/backup\"]."
+      }
+    ]
+  }
+}
